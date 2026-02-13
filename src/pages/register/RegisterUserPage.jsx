@@ -398,7 +398,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
   const toggleShowNewPassword = () => setShowNewPassword(!showNewPassword);
 
   return (
-    <div className="ucs-container">
+    <div className="ucs-page">
       {/* Header */}
       <div className="ucs-header">
         <button
@@ -409,22 +409,10 @@ export default function RegisterUserPage({ onNavigateHome }) {
           aria-label="Voltar"
         >
           <ArrowLeft size={20} />
-          {!isMobile && 'Voltar'}
         </button>
-
-        <div className="header-left">
-          <h1 className="ucs-title">
-            {isMobile ? <Smartphone size={24} /> : <User size={24} />}
-            {editingUser ? 'Editar Usuário' : 'Cadastro de Usuários'}
-            {isMobile && <span className="mobile-badge">Mobile</span>}
-          </h1>
-
-          <p className="ucs-subtitle">
-            {editingUser
-              ? (editingPassword ? 'Alterar senha do usuário' : 'Edite os dados do usuário')
-              : 'Cadastre novos usuários e gerencie os existentes'}
-          </p>
-        </div>
+        <h1 className="ucs-title">
+          {editingUser ? 'Editar Usuário' : 'Cadastro de Usuários'}
+        </h1>
       </div>
 
       <div className="ucs-content">

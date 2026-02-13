@@ -852,7 +852,7 @@ const calcularCargaRestanteUC = async (iduc, dataAula = null) => {
       .from('aulas')
       .select('data, horas')
       .eq('iduc', iduc)
-      .lt('data', dataAulaStr)
+      .lte('data', dataAulaStr)
       .order('data');
 
     if (aulasError) throw aulasError;

@@ -1,11 +1,23 @@
 /* RegisterUserPage.css - Fundo Branco */
 
+.ucs-page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
 .ucs-container {
   min-height: 100vh;
   background: #ffffff;
-  padding: 20px;
+  padding: 0;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -15,13 +27,15 @@
   gap: 16px;
   background: #0f766e;
   color: #ffffff;
-  margin: -20px -20px 24px -20px;
+  margin: 0;
   padding: 20px 24px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
 .header-left {
-  display: flex;
+  display: none;
   flex-direction: column;
 }
 
@@ -43,7 +57,7 @@
   font-size: 12px;
   font-weight: 600;
   margin-left: 10px;
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 4px;
 }
@@ -52,6 +66,7 @@
   font-size: 14px;
   color: rgba(255, 255, 255, 0.85);
   margin: 4px 0 0 0;
+  display: none;
 }
 
 
@@ -89,6 +104,8 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 /* Form Column */
