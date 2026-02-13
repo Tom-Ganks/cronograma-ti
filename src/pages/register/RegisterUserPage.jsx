@@ -75,7 +75,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
         }
 
         const { error } = await supabase
-          .from('usuarios')
+          .from('auth.users') // Tabela auth.users para atualizar email
           .update(updates)
           .eq('id', editingUser.id);
 
@@ -139,7 +139,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
         // Tentar inserir na tabela usuarios se existir
         try {
           const { error: insertError } = await supabase
-            .from('usuarios')
+            .from('auth.users') // Tabela auth.users para garantir que o usuário existe
             .insert([{
               id: data.user.id,
               email: email.trim(),
@@ -242,7 +242,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
       // Primeiro tenta deletar da tabela usuarios se existir
       try {
         const { error: tableError } = await supabase
-          .from('usuarios')
+          .from('auth.users')
           .delete()
           .eq('id', userToDelete.id);
 
@@ -322,7 +322,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
 
       // Fallback: Tenta buscar da tabela usuarios
       const { data: tableUsers, error: tableError } = await supabase
-        .from('usuarios')
+        .from('auth.users')
         .select('*')
         .order('created_at', { ascending: false });
 
