@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import supabaseClient from '../../services/supabase';
 import CronogramaPage from '../cronograma/CronogramaPage.jsx';
 import UCSRegistrationPage from '../ucsregisterpage/UcsRegistrationPage.jsx';
 import CadastroDeCurso from '../../components/CadastroDeCurso.jsx';
 import CadastroDeInstrutor from '../../components/CadastroDeInstrutor.jsx';
 import CadastroDeTurma from '../../components/CadastroDeTurma.jsx';
-import { Menu, GraduationCap, User, BookOpen, Users, Calendar, School } from 'lucide-react'; // ATUALIZADO
-import '../../styles/home.css';
 import RegisterUserPage from '../register/RegisterUserPage.jsx';
-
+import { Menu, GraduationCap, User, BookOpen, Users, Calendar, School } from 'lucide-react';
+import '../../styles/home.css';
 
 const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -25,6 +27,18 @@ const HomePage = () => {
   const navigateHome = () => {
     setCurrentPage('home');
   };
+
+  // 🔥 FUNÇÃO DE LOGOUT
+  async function handleLogout() {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+      console.error('Erro ao sair:', error);
+      return;
+    }
+
+    navigate('/'); // volta para login
+  }
 
   const renderCurrentPage = () => {
     switch (currentPage) {
@@ -49,7 +63,7 @@ const HomePage = () => {
     <div className="home-page">
       {currentPage === 'home' && (
         <>
-          {/* Header */}
+          {/* HEADER */}
           <div className="home-header">
             <div className="header-content">
               <div className="header-title">
@@ -59,18 +73,31 @@ const HomePage = () => {
                 <GraduationCap size={28} />
                 <h1>Gestão dos Cronogramas</h1>
               </div>
+
+              {/* BOTÃO DE LOGOUT */}
               <div className="header-actions">
+                <button
+                  onClick={handleLogout}
+                  className="logout-button"
+                >
+                  Sair
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}></div>
+          {/* SIDEBAR */}
+          <div
+            className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`}
+            onClick={toggleSidebar}
+          ></div>
+
           <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
             <div className="sidebar-header">
               <User size={24} />
               <h2>Menu</h2>
             </div>
+
             <div className="sidebar-content">
               <div className="user-info">
                 <div className="user-avatar">
@@ -79,6 +106,7 @@ const HomePage = () => {
                 <div className="user-name">Administrador</div>
                 <div className="user-email">admin@senac.com.br</div>
               </div>
+
               <nav>
                 <ul className="nav-menu">
                   <li className="nav-item">
@@ -91,6 +119,7 @@ const HomePage = () => {
                       Página Inicial
                     </a>
                   </li>
+
                   <li className="nav-item">
                     <a
                       href="#"
@@ -101,6 +130,7 @@ const HomePage = () => {
                       Unidades Curriculares
                     </a>
                   </li>
+
                   <li className="nav-item">
                     <a
                       href="#"
@@ -111,16 +141,18 @@ const HomePage = () => {
                       Cursos
                     </a>
                   </li>
+
                   <li className="nav-item">
                     <a
                       href="#"
                       className={`nav-link ${currentPage === 'instrutores' ? 'active' : ''}`}
                       onClick={(e) => { e.preventDefault(); navigateTo('instrutores'); }}
                     >
-                      <School size={20} /> {/* ATUALIZADO */}
+                      <School size={20} />
                       Instrutores
                     </a>
                   </li>
+
                   <li className="nav-item">
                     <a
                       href="#"
@@ -131,6 +163,7 @@ const HomePage = () => {
                       Turmas
                     </a>
                   </li>
+
                   <li className="nav-item">
                     <a
                       href="#"
@@ -141,6 +174,28 @@ const HomePage = () => {
                       Cronograma
                     </a>
                   </li>
+
+                  <li className="nav-item">
+                    <a
+                      href="#"
+                      className={`nav-link ${currentPage === 'Cadastro-de-usuario' ? 'active' : ''}`}
+                      onClick={(e) => { e.preventDefault(); navigateTo('Cadastro-de-usuario'); }}
+                    >
+                      <User size={20} />
+                      Cadastro de Usuário
+                    </a>
+                  </li>
+
+                  {/* BOTÃO DE LOGOUT */}
+                  <div className="header-actions">
+                    <button
+                      onClick={handleLogout}
+                      className="logout-button"
+                    >
+                      Sair
+                    </button>
+                  </div>
+
                 </ul>
               </nav>
             </div>
@@ -148,7 +203,7 @@ const HomePage = () => {
         </>
       )}
 
-      {/* Main Content */}
+      {/* CONTEÚDO PRINCIPAL */}
       {renderCurrentPage()}
     </div>
   );
@@ -192,8 +247,8 @@ const MainHomePage = ({ onNavigate }) => {
         </div>
 
         <div className="menu-card" onClick={() => onNavigate('instrutores')}>
-          <div className="menu-icon orange"> {/* MUDADO de teal para orange */}
-            <School size={28} /> {/* ATUALIZADO */}
+          <div className="menu-icon orange">
+            <School size={28} />
           </div>
           <h3 className="menu-title">Instrutores</h3>
           <p className="menu-description">
@@ -222,8 +277,8 @@ const MainHomePage = ({ onNavigate }) => {
         </div>
 
         <div className="menu-card" onClick={() => onNavigate('Cadastro-de-usuario')}>
-          <div className="menu-icon teal"> {/* MANTIDO teal */}
-            <User size={28} /> {/* ATUALIZADO para User */}
+          <div className="menu-icon teal">
+            <User size={28} />
           </div>
           <h3 className="menu-title">Cadastro de Usuário</h3>
           <p className="menu-description">
@@ -235,4 +290,4 @@ const MainHomePage = ({ onNavigate }) => {
   );
 };
 
-export default HomePage;
+export default HomePage

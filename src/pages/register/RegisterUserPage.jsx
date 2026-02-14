@@ -74,10 +74,12 @@ export default function RegisterUserPage({ onNavigateHome }) {
           setSuccess('Email atualizado. Para alterar senha, use a função de reset de senha do Supabase.');
         }
 
-        const { error } = await supabase
-          .from('auth.users') // Tabela auth.users para atualizar email
-          .update(updates)
-          .eq('id', editingUser.id);
+        const { error } = await supabase.rpc('update_user', {
+          p_user_id: editingUser.id,
+          p_email: updates.email ?? null,
+          p_password: updates.password ?? null,
+          p_nome: updates.nome ?? null
+        });
 
         if (error) throw error;
 
@@ -139,7 +141,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
         // Tentar inserir na tabela usuarios se existir
         try {
           const { error: insertError } = await supabase
-            .from('auth.users') // Tabela auth.users para garantir que o usuário existe
+            .from('usuarios')
             .insert([{
               id: data.user.id,
               email: email.trim(),
@@ -241,17 +243,22 @@ export default function RegisterUserPage({ onNavigateHome }) {
     try {
       // Primeiro tenta deletar da tabela usuarios se existir
       try {
-        const { error: tableError } = await supabase
-          .from('auth.users')
-          .delete()
-          .eq('id', userToDelete.id);
+        const { error } = await supabase.rpc('delete_user', {
+          p_user_id: userToDelete.id
+        });
 
-        if (tableError && !tableError.message.includes('does not exist')) {
-          console.error('Erro ao deletar da tabela usuarios:', tableError);
+        if (error) {
+          console.error('Erro ao excluir usuário:', error);
+          alert('Não foi possível excluir o usuário.');
+          return;
         }
-      } catch (tableErr) {
-        console.warn('Tabela usuarios não existe ou erro ao deletar:', tableErr.message);
+
+        console.log('Usuário excluído com sucesso!');
+      } catch (err) {
+        console.error('Erro inesperado ao chamar delete_user:', err);
+        alert('Erro inesperado ao excluir usuário.');
       }
+
 
       setUsers(prevUsers => prevUsers.filter(u => u.id !== userToDelete.id));
       setSuccess('Usuário removido da lista');
@@ -322,7 +329,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
 
       // Fallback: Tenta buscar da tabela usuarios
       const { data: tableUsers, error: tableError } = await supabase
-        .from('auth.users')
+        .from('usuarios')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -398,7 +405,7 @@ export default function RegisterUserPage({ onNavigateHome }) {
   const toggleShowNewPassword = () => setShowNewPassword(!showNewPassword);
 
   return (
-    <div className="ucs-page">
+    <div className="ucs-container">
       {/* Header */}
       <div className="ucs-header">
         <button
@@ -409,10 +416,22 @@ export default function RegisterUserPage({ onNavigateHome }) {
           aria-label="Voltar"
         >
           <ArrowLeft size={20} />
+          {!isMobile && 'Voltar'}
         </button>
-        <h1 className="ucs-title">
-          {editingUser ? 'Editar Usuário' : 'Cadastro de Usuários'}
-        </h1>
+
+        <div className="header-left">
+          <h1 className="ucs-title">
+            {isMobile ? <Smartphone size={24} /> : <User size={24} />}
+            {editingUser ? 'Editar Usuário' : 'Cadastro de Usuários'}
+            {isMobile && <span className="mobile-badge">Mobile</span>}
+          </h1>
+
+          <p className="ucs-subtitle">
+            {editingUser
+              ? (editingPassword ? 'Alterar senha do usuário' : 'Edite os dados do usuário')
+              : 'Cadastre novos usuários e gerencie os existentes'}
+          </p>
+        </div>
       </div>
 
       <div className="ucs-content">
